@@ -1,76 +1,52 @@
 def parse_input(file):
     with open(file, 'r') as f:
-        lines = [line.rstrip() for line in f]
+        lines = [line.replace(" ", "").rstrip() for line in f]
 
-    a = [[0,0,0] for _ in range(3)]
-    b = [0,0,0]
-    for i in range(3):
-        lines[i] = lines[i].replace(" ", "")
+    a = [[0, 0, 0] for _ in range(3)]
+    b = [0, 0, 0]
 
-        ix = lines[i].find("x")
-        if ix != -1:
-            aux = lines[i][:ix]
-            if len(aux) > 0:
-                if aux[0] == "-":
-                    if len(aux) == 1:
-                        a[i][0] = -1
-                    else:
-                        a[i][0] = -int(aux[1:])
-                elif aux[0] == "+":
-                    if len(aux) == 1:
-                        a[i][0] = 1
-                    else:
-                        a[i][0] = int(aux[1:])
+    for i in range(len(lines)):
+        c = 1
+        j = 0
+
+        while j < len(lines[i]):
+            if lines[i][j] == '-':
+                c = -1
+                j += 1
+            elif lines[i][j] == '+':
+                c = 1
+                j += 1
+            elif lines[i][j].isdigit():
+                first = j
+                while j < len(lines[i]) and lines[i][j].isdigit():
+                    j += 1
+                c *= int(lines[i][first:j])
+            elif lines[i][j] == 'x':
+                a[i][0] = c
+                c = 1
+                j += 1
+            elif lines[i][j] == 'y':
+                a[i][1] = c
+                c = 1
+                j += 1
+            elif lines[i][j] == 'z':
+                a[i][2] = c
+                c = 1
+                j += 1
+            elif lines[i][j] == '=':
+                j += 1
+                if lines[i][j] == '-':
+                    c = -1
+                    j += 1
                 else:
-                    a[i][0] = int(aux)
-            else:
-                a[i][0] = 1
+                    c = 1
 
-        iy = lines[i].find("y")
-        if iy != -1:
-            aux = lines[i][ix+1:iy]
-            if len(aux) > 0:
-                if aux[0] == "-":
-                    if len(aux) == 1:
-                        a[i][1] = -1
-                    else:
-                        a[i][1] = -int(aux[1:])
-                elif aux[0] == "+":
-                    if len(aux) == 1:
-                        a[i][1] = 1
-                    else:
-                        a[i][1] = int(aux[1:])
-                else:
-                    a[i][1] = int(aux)
-            else:
-                a[i][1] = 1
+                first = j
+                while j < len(lines[i]) and lines[i][j].isdigit():
+                    j += 1
+                b[i] = c * int(lines[i][first:j])
 
-        iz = lines[i].find("z")
-        if iz != -1:
-            aux = lines[i][iy+1:iz]
-            if len(aux) > 0:
-                if aux[0] == "-":
-                    if len(aux) == 1:
-                        a[i][2] = -1
-                    else:
-                        a[i][2] = -int(aux[1:])
-                elif aux[0] == "+":
-                    if len(aux) == 1:
-                        a[i][2] = 1
-                    else:
-                        a[i][2] = int(aux[1:])
-                else:
-                    a[i][2] = int(aux)
             else:
-                a[i][2] = 1
-
-        ib = lines[i].find("=")
-        aux = lines[i][ib+1:]
-        if aux[0] == "-":
-            b[i] = -int(aux[1:])
-        elif aux[0] == "+":
-            b[i] = int(aux[1:])
-        else:
-            b[i] = int(aux)
+                j += 1
 
     return a, b
